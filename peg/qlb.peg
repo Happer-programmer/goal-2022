@@ -1,0 +1,35 @@
+start =
+  space? content:literal* space? { return content }
+
+literal =
+  string / number / symbol / list
+
+list = "(" content:start ")" space? { return content }
+
+symbol =
+  first:hrf rest:(hrf / [٠١٢٣٤٥٦٧٨٩] / '-' / '؟' / 'ـ' )* space? { var sym = (first + rest.join("")).replace(/ـ/g, ""); Qlb.symbols[sym] = true; return sym; }
+
+string =
+  '"' str:[^""]* '"' space? { return str.join("") }
+
+number =
+  d:(rqm / "،")+ space? { return parseFloat(d.join('').replace(/،/g, ".")) }
+
+
+hrf =
+  "ؤ"/"ئ"/"أ"/"ا"/"ب"/"ج"/"د"/"ه"/"و"/"ز"/"ح"/"ت"/"ي"/"ك"/"ل"/"م"/"ن"/"ق"/"ش"/"ع"/"ر"/"ت"/"ط"/"ة"/"س"/"د"/"ف"/"غ"/"خ"/"ص"/"ذ"/"ن"/"م"/"ظ"/"ى"/"آ"/"إ"/"ض"/"ث"
+
+rqm = wahad/tnein/tlateh/arbaa/khamseh/sitteh/sabaa/tmaneh/tisaa/siffr
+
+wahad   = "١" { return "1" }
+tnein   = "٢" { return "2" }
+tlateh  = "٣" { return "3" }
+arbaa   = "٤" { return "4" }
+khamseh = "٥" { return "5" }
+sitteh  = "٦" { return "6" }
+sabaa   = "٧" { return "7" }
+tmaneh  = "٨" { return "8" }
+tisaa   = "٩" { return "9" }
+siffr   = "٠" { return "0" }
+
+space  = [ \n\t]+ { return "" }
